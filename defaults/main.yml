@@ -8,4 +8,5 @@ sftp_allow_passwords: False
 # set to false to allow rsync
 sftp_force_command: internal-sftp
 
+sftp_default_shell: '/sbin/nologin'
 
