@@ -8,6 +8,7 @@ Match Group {{ sftp_group_name }}
 {%if sftp_force_command %}
     ForceCommand {{ sftp_force_command }}
 {% endif %}
+    AuthorizedKeysFile /etc/ssh/authorized_keys/%u
     PubkeyAuthentication yes
     PasswordAuthentication {% if sftp_allow_passwords %}yes{% else %}no{% endif %}
 
