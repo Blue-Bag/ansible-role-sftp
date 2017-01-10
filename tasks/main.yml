@@ -4,13 +4,21 @@
   group: name={{ sftp_group_name }}
          state=present
 
-- name: Add Group to AllowGroupss
-  replace:
-    backup: yes
-    dest: /etc/ssh/sshd_config
-    regexp: '^(AllowGroups(?!.*\b{{ sftp_group_name }}\b).*)$'
-    replace: '\1 {{ sftp_group_name }}'
+# - name: Add Group to AllowGroupss
+#   replace:
+#     backup: yes
+#     dest: /etc/ssh/sshd_config
+#     regexp: '^(AllowGroups(?!.*\b{{ sftp_group_name }}\b).*)$'
+#     replace: '\1 {{ sftp_group_name }}'
 
+- name: Add Group to AllowGroups
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    backup: True
+    backrefs: True
+    state: present
+    regexp: '^(AllowGroups(?!.*\b{{ sftp_group_name }}\b).*)$'
+    line: '\1 {{ sftp_group_name }}'
 
 # Necessary for chrooting of SFTP users.
 - name: SFTP-Server | Alter sftp subsystem entry
