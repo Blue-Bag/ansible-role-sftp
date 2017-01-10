@@ -55,6 +55,16 @@ The following role variables are relevant:
     - sftp-server
 ```
 
+When sftp_force_command is false, we can force a per user specific
+command by putting the "command" option in the .ssh/authorized_keys for
+the user in question.
+
+Example:
+/home/user/.ssh/authorized_keys
+command="rsync --server -av --delete . /my/dir", ssh-rsa AAAA....
+see https://github.com/rastandy/ansible-sftp/commit/490cf934f84ed407e8c1945e20854fa8f712c391
+
+
 ## License
 
 Licensed under the MIT License. See the LICENSE file for details.
