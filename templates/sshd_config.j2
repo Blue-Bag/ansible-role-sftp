@@ -5,7 +5,6 @@ Match Group {{ sftp_group_name }}
     ChrootDirectory %h
     AllowTCPForwarding no
     X11Forwarding no
-    {% if sftp_force_internal_sftp}
 
     {{ '' if sftp_force_internal_sftp else '#' }} ForceCommand internal-sftp
 
