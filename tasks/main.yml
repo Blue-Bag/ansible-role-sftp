@@ -30,7 +30,7 @@
 
 # Some sed magic to grab the entire sshd_config, excluding our custom config block.
 - name: SFTP-Server | Get sshd_config content
-  shell: sed -n '/# Begin SFTP-Server  {{ sftp_group_name }} block/,/# End SFTP-Server block/! { p }' /etc/ssh/sshd_config
+  shell: sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} block/! { p }' /etc/ssh/sshd_config
   register: sftp_sshd_config_content
   changed_when: True == False
 
