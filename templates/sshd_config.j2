@@ -8,6 +8,8 @@ Match Group {{ sftp_group_name }}
     {% if sftp_force_internal_sftp}
 
     {{ '' if sftp_force_internal_sftp else '#' }} ForceCommand internal-sftp
-    PasswordAuthentication {% if sftp_allow_passwords %}yes{% else %}no{% endif %}
+
     PubkeyAuthentication yes
+    PasswordAuthentication {% if sftp_allow_passwords %}yes{% else %}no{% endif %}
+
 # End SFTP-Server block
