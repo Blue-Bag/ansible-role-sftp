@@ -45,14 +45,12 @@ The following role variables are relevant:
       - name: peter
         password: "$1$salty$li5TXAa2G6oxHTDkqx3Dz/" # passpass
         authorized: []
+        directories:
+          - { name: inbox, mode: 755}
       - name: sally
         password: ""
         authorized: [sally.pub]
-    - sftp_directories:
-      - imports
-      - exports
-      - { name: public, mode: 755 }
-      - other
+
   roles:
     - sftp-server
 ```
