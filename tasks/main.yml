@@ -56,12 +56,6 @@
         createhome=no
   with_items: "{{ sftp_users }}"
 
-# # Install all relevant public keys.
-# - name: SFTP-Server | Install public keys
-#   authorized_key: user={{ item.0.name }} key='{{ lookup('file', item.1) }}'
-#   with_subelements:
-#     - "{{ sftp_users }}"
-#     - authorized
 
 # Install all relevant public keys.
 - name: SFTP-Server | Install public keys
