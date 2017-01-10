@@ -30,7 +30,7 @@
 
 # Some sed magic to grab the entire sshd_config, excluding our custom config block.
 - name: SFTP-Server | Get sshd_config content
-  shell: sed -n '/# Begin SFTP-Server block/,/# End SFTP-Server block/! { p }' /etc/ssh/sshd_config
+  shell: sed -n '/# Begin SFTP-Server  {{ sftp_group_name }} block/,/# End SFTP-Server block/! { p }' /etc/ssh/sshd_config
   register: sftp_sshd_config_content
   changed_when: True == False
 
@@ -73,11 +73,11 @@
 
 # Create directories for SFTP users. Optional, but recommended.
 - name: SFTP-Server | Create directories
-  file: path="{{ sftp_home_partition }}/{{ item[0].name }}/{{ item[1].name | default(item[1]) }}"
-        owner={{ item[0].name }}
-        group={{ item[0].name }}
-        mode="{{ item[1].mode | default(0750) }}"
+  file: path="{{ sftp_home_partition }}/{{ item.0.name }}/{{ item.1.name }}"
+        owner={{ item.0.name }}
+        group={{ item.1.group | default(item.0.name) }}
+        mode="{{ item.1.mode | default(0750) }}"
         state=directory
-  with_nested:
+  with_subelements:
     - "{{ sftp_users }}"
-    - "{{ sftp_directories }}"
+    - directories
