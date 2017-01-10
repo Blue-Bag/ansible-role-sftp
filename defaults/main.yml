@@ -3,3 +3,7 @@ sftp_home_partition: /home
 sftp_group_name: sftpusers
 sftp_directories: []
 sftp_allow_passwords: False
+
+# see: https://github.com/rastandy/ansible-sftp/commit/681449016bd407573c98e046835d0e29cdb99c9d
+# set to false to allow rsync
+sftp_force_internal_sftp: True

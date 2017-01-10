@@ -5,7 +5,9 @@ Match Group {{ sftp_group_name }}
     ChrootDirectory %h
     AllowTCPForwarding no
     X11Forwarding no
-    ForceCommand internal-sftp
-    PasswordAuthentication {% if sftp_allow_passwords %}yes{% else %}no{% endif %}
+    {% if sftp_force_internal_sftp}
 
+    {{ '' if sftp_force_internal_sftp else '#' }} ForceCommand internal-sftp
+    PasswordAuthentication {% if sftp_allow_passwords %}yes{% else %}no{% endif %}
+    PubkeyAuthentication yes
 # End SFTP-Server block
