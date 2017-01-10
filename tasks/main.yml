@@ -93,3 +93,7 @@
         group={{ sftp_group_name }}
         mode="0750"
   with_items: "{{ sftp_users }}"
+
+- include: sftp-logging.yml
+  when: sftp_custom_log == true and ansible_os_family == "Debian"
+  tags: [sftp_custom_log]

@@ -10,3 +10,6 @@ sftp_force_command: internal-sftp
 
 sftp_default_shell: '/sbin/nologin'
 
+sftp_custom_log: False
+
+sftp_rsyslog_conf: /etc/rsyslog.d/sftp.conf

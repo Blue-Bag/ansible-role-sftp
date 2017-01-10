@@ -1,3 +1,5 @@
 ---
 
 ssh_service: ssh
+
+sftp_syslogd_name: rsyslog

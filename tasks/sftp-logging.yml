@@ -1,0 +1,26 @@
+---
+
+# tasks/ssh-logging
+# see http://www.the-art-of-web.com/system/sftp-logging-chroot/
+
+- name: SFTP-Server | Create log directories
+  file: path="{{ sftp_home_partition }}/{{ item.name }}/dev/log"
+        owner="{{ item.name }}"
+        group="{{ sftp_group_name }}"
+        mode="2755"
+        state=directory
+  with_items:
+    - "{{ sftp_users }}"
+  when: sftp_custom_log
+
+
+- name: SFTP-Server | rsyslog template file
+  template:
+    src: rsyslog-sftp.conf.j2
+    dest: "{{ sftp_rsyslog_conf }}"
+    backup: no
+  become: true
+  notify:
+   - Restart rsyslogd
+  when: sftp_custom_log
+
