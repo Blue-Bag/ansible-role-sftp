@@ -18,8 +18,9 @@ sftp_default_shell: '/sbin/nologin'
 
 sftp_custom_log: False
 
-sftp_log_file: 'sftp.log'
+sftp_log_file: '/var/log/sftp.log'
 sftp_logfile_rotate_number: 52
 sftp_logfile_rotate_period: 'weekly'
+sftp_log_postrotate_cmd: 'invoke-rc.d rsyslog force-reload > /dev/null'
 
 sftp_rsyslog_conf: /etc/rsyslog.d/sftp.conf

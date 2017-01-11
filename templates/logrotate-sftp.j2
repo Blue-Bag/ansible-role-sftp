@@ -6,7 +6,9 @@
         delaycompress
         copytruncate
         notifempty
+        {% if sftp_log_postrotate_cmd %}
         postrotate
-                invoke-rc.d rsyslog reload > /dev/null
+                {{ sftp_log_postrotate_cmd }}
         endscript
+        {% endif %}
 }

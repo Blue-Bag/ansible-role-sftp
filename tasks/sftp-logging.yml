@@ -1,7 +1,6 @@
 ---
 
 # tasks/ssh-logging
-# see http://www.the-art-of-web.com/system/sftp-logging-chroot/
 
 - name: SFTP-Server | Create log directories
   file: path="{{ sftp_home_partition }}/{{ item.name }}/dev"

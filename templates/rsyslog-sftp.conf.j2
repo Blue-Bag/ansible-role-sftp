@@ -6,5 +6,5 @@ input(type="imuxsock" Socket="{{ sftp_home_partition }}/{{ user.name }}/dev/log"
 {% endfor %}
 
 # log internal-sftp activity to sftp.log
-if $programname == 'internal-sftp' then /var/log/{{ sftp_log_file }}
+if $programname == 'internal-sftp' then {{ sftp_log_file }}
 & stop
