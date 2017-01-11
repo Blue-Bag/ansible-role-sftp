@@ -28,7 +28,7 @@
 - name: SFTP-Server | Alter sftp subsystem entry
   lineinfile: dest=/etc/ssh/sshd_config
               regexp="^Subsystem(\s+)sftp"
-              line="Subsystem sftp internal-sftp -f AUTH -l VERBOSE"
+              line="Subsystem sftp internal-sftp -f {{ sftp_log_target }} -l {{ sftp_log_level }}"
               state=present
   notify: SFTP-Server | Restart sshd
 

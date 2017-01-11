@@ -45,6 +45,7 @@ The following role variables are relevant:
       - name: peter
         password: "$1$salty$li5TXAa2G6oxHTDkqx3Dz/" # passpass
         authorized: []
+        shell: /sbin/nologin
         directories:
           - { name: inbox, mode: 755}
       - name: sally

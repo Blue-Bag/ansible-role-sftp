@@ -4,7 +4,7 @@
 # see http://www.the-art-of-web.com/system/sftp-logging-chroot/
 
 - name: SFTP-Server | Create log directories
-  file: path="{{ sftp_home_partition }}/{{ item.name }}/dev/log"
+  file: path="{{ sftp_home_partition }}/{{ item.name }}/dev"
         owner="{{ item.name }}"
         group="{{ sftp_group_name }}"
         mode="2755"
@@ -24,3 +24,11 @@
    - Restart rsyslogd
   when: sftp_custom_log
 
+- name: Create logrotate entry for sftp.log
+  template:
+    src: logrotate-sftp.j2
+    dest: "/etc/logrotate.d/sftp"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
