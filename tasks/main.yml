@@ -31,19 +31,33 @@
               state=present
   notify: SFTP-Server | Restart sshd
 
-# Some sed magic to grab the entire sshd_config, excluding our custom config block.
-- name: SFTP-Server | Get sshd_config content
-  shell: sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} block/! { p }' /etc/ssh/sshd_config
-  register: sftp_sshd_config_content
-  changed_when: True == False
+# # Some sed magic to grab the entire sshd_config, excluding our custom config block.
+# - name: SFTP-Server | Get sshd_config content
+#   shell: sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} block/! { p }' /etc/ssh/sshd_config
+#   register: sftp_sshd_config_content
+#   changed_when: True == False
 
-# Create/recreate ssh_config.
-- name: SFTP-Server | Apply sshd_config template
-  template: src=sshd_config.j2
-            dest=/etc/ssh/sshd_config
-            owner=root
-  notify: SFTP-Server | Restart sshd
+# # Create/recreate ssh_config. (maybe change to blockinfile)
+# - name: SFTP-Server | Apply sshd_config template
+#   template: src=sshd_config.j2
+#             dest=/etc/ssh/sshd_config
+#             owner=root
+#   notify: SFTP-Server | Restart sshd
 
+- name: SFTP-Server | Apply sshd_config block
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    marker: "# {mark} ANSIBLE MANAGED BLOCK SFTP-Server {{ sftp_group_name }}"
+    insertafter: "EOF"
+    content: |
+      Match Group {{ sftp_group_name }}
+         ChrootDirectory %h
+         AllowTCPForwarding no
+         X11Forwarding no
+         {{'ForceCommand ' ~ sftp_force_command  if sftp_force_command else ''}}
+         AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+         PubkeyAuthentication yes
+         PasswordAuthentication {{'yes' if sftp_allow_passwords else 'no'}}
 
 # Create each SFTP user with home directory on the correct patition, and add to SFTP group.
 - name: SFTP-Server | Create sftp users
