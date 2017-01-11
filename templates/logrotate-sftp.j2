@@ -6,9 +6,9 @@
         delaycompress
         copytruncate
         notifempty
-        {% if sftp_log_postrotate_cmd %}
+{% if sftp_log_postrotate_cmd %}
         postrotate
-                {{ sftp_log_postrotate_cmd }}
+            {{ sftp_log_postrotate_cmd }}
         endscript
-        {% endif %}
+{% endif %}
 }
