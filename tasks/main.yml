@@ -55,6 +55,14 @@
         createhome=no
   with_items: "{{ sftp_users }}"
 
+- name: SFTP-Server | remove user bash files
+  file:
+    state: absent
+    path: "{{ sftp_home_partition }}/{{ item.0.name}}/{{ item.1}}"
+  with_nested:
+    - "{{ sftp_users }}"
+    - "{{ sftp_user_files_delete }}"
+
 
 # Install all relevant public keys.
 - name: SFTP-Server | Install public keys
