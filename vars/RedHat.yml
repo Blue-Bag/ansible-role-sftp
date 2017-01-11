@@ -1,3 +1,4 @@
 ---
 
 ssh_service: sshd
+__sftp_default_shell: '/sbin/nologin'

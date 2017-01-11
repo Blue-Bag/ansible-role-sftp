@@ -3,6 +3,12 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: SFTP-Server | Define default shell.
+  set_fact:
+    sftp_default_shell: "{{ __sftp_default_shell }}"
+  when: sftp_default_shell is not defined
+
+
 # Creates group for SFTP users.
 - name: SFTP-Server | Create sftp user group
   group: name={{ sftp_group_name }}

@@ -13,8 +13,8 @@ sftp_log_level: 'VERBOSE'
 # in this default we repeat the internal sftp command with logging
 sftp_force_command: "internal-sftp -f {{ sftp_log_target }} -l {{ sftp_log_level }}"
 
-
-sftp_default_shell: '/sbin/nologin'
+# you can override the OS default nologin shell here
+# sftp_default_shell: '/usr/sbin/nologin'
 
 sftp_custom_log: False
 

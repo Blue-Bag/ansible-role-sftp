@@ -1,5 +1,5 @@
 ---
 
 ssh_service: ssh
-
+__sftp_default_shell: '/usr/sbin/nologin'
 sftp_syslogd_name: rsyslog
