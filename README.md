@@ -4,8 +4,8 @@ An Ansible role which configures an OpenSSH server for chrooted SFTP access.  Th
 
 This forked version has cherry picked additions/updates form other forks
 These are cited in the various commits where relevant.
-They have benn manually applied cf. cherry picking as they may have been adapted.
-Buy popr to the other contributors.
+They have been manually applied cf. cherry picking as they may have been adapted.
+Buy props to the other contributors.
 
 This Forked version also contains the following additional facilities:
 
@@ -43,16 +43,22 @@ Other than that, only Ansible itself is required.  Tested using Ansible 1.9, 2.0
   * `name`: The Unix name of the user that requires SFTP access.
   * `password`: A password hash for the user to login with.  Blank passwords can be set with `password: ""`.  NOTE: It appears that `UsePAM yes` and `PermitEmptyPassword yes` need to be set in `sshd_config` in order for blank passwords to work properly.  Making those changes currently falls outside the scope of this role and will need to be done externally.
   * `authorized`: A list of files placed in `files/` which contain valid public keys for the SFTP user.
+
 ##### Logging SFTP activity
+
  * `sftp_custom_log`: Boolean to set up custom logging
  * `sftp_log_file`: The name of the custom log file (including full path)
  * `sftp_log_target`:  the default target of the log e.g. 'AUTH'
  * `sftp_log_level`:  the level of logging' e.g. `VERBOSE`, `INFO` etc
  * `sftp_rsyslog_conf`: rsyslog configuration of the custom log
+
 #####Default user files
+
 When a new user is created, bashrc and other profile files may be created, these are generally not required as we
 are not allowing interactive shells. Ideally they would not be created. Could be done by using a custom blank skeleton set? But for now we can pass in a set of files to delete from the user's home.
+
 *`sftp_user_files_delete`:  User home directory files to delete
+
  - e.g. [`.bashrc`, `.profile`, `.bash_logout`]
 
 ## Example Playbook
