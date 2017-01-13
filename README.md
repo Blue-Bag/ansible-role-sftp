@@ -92,11 +92,12 @@ the user in question.
 Example:
 /home/user/.ssh/authorized_keys
 command="rsync --server -av --delete . /my/dir", ssh-rsa AAAA....
+
 see https://github.com/rastandy/ansible-sftp/commit/490cf934f84ed407e8c1945e20854fa8f712c391
 
 Logging:
-Custom loggin can be set up to enable the logging of sftp activity.
-see:
+Custom loggin can be set up to enable the logging of sftp activity. This has been added to this version.
+Refs:
  - http://www.the-art-of-web.com/system/sftp-logging-chroot/
  - https://debian-administration.org/article/637/OpenSSH_logging_with_ChrootDirectory
 
