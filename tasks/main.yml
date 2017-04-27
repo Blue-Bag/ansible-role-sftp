@@ -69,6 +69,7 @@
         createhome=no
   with_items: "{{ sftp_users }}"
 
+# this only works after one succesful login (the files are created then)
 - name: SFTP-Server | remove user bash files
   file:
     state: absent
