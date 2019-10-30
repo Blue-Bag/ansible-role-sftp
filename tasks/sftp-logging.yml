@@ -1,0 +1,33 @@
+---
+
+# tasks/ssh-logging
+
+- name: SFTP-Server | Create log directories
+  file: path="{{ sftp_home_partition }}/{{ item.name }}/dev"
+        owner="{{ item.name }}"
+        group="{{ sftp_group_name }}"
+        mode="2755"
+        state=directory
+  with_items:
+    - "{{ sftp_users }}"
+  when: sftp_custom_log
+
+
+- name: SFTP-Server | rsyslog template file
+  template:
+    src: rsyslog-sftp.conf.j2
+    dest: "{{ sftp_rsyslog_conf }}"
+    backup: no
+  become: true
+  notify:
+   - Restart rsyslogd
+  when: sftp_custom_log
+
+- name: Create logrotate entry for sftp.log
+  template:
+    src: logrotate-sftp.j2
+    dest: "/etc/logrotate.d/sftp"
+    owner: root
+    group: root
+    mode: 0644
+  become: true

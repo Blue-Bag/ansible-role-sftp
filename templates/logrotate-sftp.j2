@@ -1,0 +1,14 @@
+{{ sftp_log_file }} {
+        {{ sftp_logfile_rotate_period | default('weekly') }}
+        missingok
+        rotate {{ sftp_logfile_rotate_number | default(52) }}
+        compress
+        delaycompress
+        copytruncate
+        notifempty
+{% if sftp_log_postrotate_cmd %}
+        postrotate
+            {{ sftp_log_postrotate_cmd }}
+        endscript
+{% endif %}
+}

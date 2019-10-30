@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+# create additional sockets for the sftp chrooted users
+#module(load="imuxsock")
+{% for user in sftp_users %}
+input(type="imuxsock" Socket="{{ sftp_home_partition }}/{{ user.name }}/dev/log" CreatePath="on")
+{% endfor %}
+
+# log internal-sftp activity to sftp.log
+if $programname == 'internal-sftp' then {{ sftp_log_file }}
+& stop

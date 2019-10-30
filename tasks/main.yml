@@ -1,49 +1,90 @@
 ---
+
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: SFTP-Server | Define default shell.
+  set_fact:
+    sftp_default_shell: "{{ __sftp_default_shell }}"
+  when: sftp_default_shell is not defined
+
+
 # Creates group for SFTP users.
 - name: SFTP-Server | Create sftp user group
   group: name={{ sftp_group_name }}
          state=present
 
+- name: Add Group to AllowGroups
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    backup: True
+    backrefs: True
+    state: present
+    regexp: '^(AllowGroups(?!.*\b{{ sftp_group_name }}\b).*)$'
+    line: '\1 {{ sftp_group_name }}'
+
 # Necessary for chrooting of SFTP users.
 - name: SFTP-Server | Alter sftp subsystem entry
   lineinfile: dest=/etc/ssh/sshd_config
               regexp="^Subsystem(\s+)sftp"
-              line="Subsystem sftp internal-sftp -f AUTH -l VERBOSE"
+              line="Subsystem sftp internal-sftp -f {{ sftp_log_target }} -l {{ sftp_log_level }}"
               state=present
   notify: SFTP-Server | Restart sshd
 
-# Some sed magic to grab the entire sshd_config, excluding our custom config block.
-- name: SFTP-Server | Get sshd_config content
-  shell: sed -n '/# Begin SFTP-Server block/,/# End SFTP-Server block/! { p }' /etc/ssh/sshd_config
-  register: sftp_sshd_config_content
-  changed_when: True == False
+# # Some sed magic to grab the entire sshd_config, excluding our custom config block.
+# - name: SFTP-Server | Get sshd_config content
+#   shell: sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} block/! { p }' /etc/ssh/sshd_config
+#   register: sftp_sshd_config_content
+#   changed_when: True == False
 
-# Create/recreate ssh_config.
-- name: SFTP-Server | Apply sshd_config template
-  template: src=sshd_config.j2
-            dest=/etc/ssh/sshd_config
-            owner=root
-  notify: SFTP-Server | Restart sshd
+# # Create/recreate ssh_config. (maybe change to blockinfile)
+# - name: SFTP-Server | Apply sshd_config template
+#   template: src=sshd_config.j2
+#             dest=/etc/ssh/sshd_config
+#             owner=root
+#   notify: SFTP-Server | Restart sshd
+
+- name: SFTP-Server | Apply sshd_config block
+  blockinfile:
+    dest: /etc/ssh/sshd_config
+    marker: "# {mark} ANSIBLE MANAGED BLOCK SFTP-Server {{ sftp_group_name }}"
+    insertafter: "EOF"
+    content: |
+      Match Group {{ sftp_group_name }}
+         ChrootDirectory %h
+         AllowTCPForwarding no
+         X11Forwarding no
+         {{'ForceCommand ' ~ sftp_force_command  if sftp_force_command else ''}}
+         AuthorizedKeysFile /etc/ssh/authorized_keys/%u
+         PubkeyAuthentication yes
+         PasswordAuthentication {{'yes' if sftp_allow_passwords else 'no'}}
 
 # Create each SFTP user with home directory on the correct patition, and add to SFTP group.
 - name: SFTP-Server | Create sftp users
   user: name={{ item.name }}
-        groups={{ sftp_group_name }}
+        group={{ sftp_group_name }}
         home="{{ sftp_home_partition }}/{{ item.name }}"
+        shell="{{item.shell | default(sftp_default_shell)}}"
         state=present
+        createhome=no
   with_items: "{{ sftp_users }}"
 
-# A working chrooted SFTP setup requires root:sftgroup ownership of a user's home directory.
-- name: SFTP-Server | Correct ownership and permission of home directories
-  file: path="{{ sftp_home_partition }}/{{ item.name }}"
-        owner=root
-        group={{ sftp_group_name }}
-        mode="0750"
-  with_items: "{{ sftp_users }}"
+# this only works after one succesful login (the files are created then)
+- name: SFTP-Server | remove user bash files
+  file:
+    state: absent
+    path: "{{ sftp_home_partition }}/{{ item.0.name}}/{{ item.1}}"
+  with_nested:
+    - "{{ sftp_users }}"
+    - "{{ sftp_user_files_delete }}"
+
 
 # Install all relevant public keys.
 - name: SFTP-Server | Install public keys
-  authorized_key: user={{ item.0.name }} key='{{ lookup('file', item.1) }}'
+  authorized_key: user={{ item.0.name }}
+                  key='{{ lookup('file', item.1) }}'
+                  manage_dir=no
+                  path='/etc/ssh/authorized_keys/{{ item.0.name }}'
   with_subelements:
     - "{{ sftp_users }}"
     - authorized
@@ -53,15 +94,28 @@
   user: name={{ item.name }}
         password={{ item.password }}
   with_items: "{{ sftp_users }}"
-  when: item.password is defined
+  when: (item.password is defined) and (item.password != '')
+  no_log: true
 
 # Create directories for SFTP users. Optional, but recommended.
 - name: SFTP-Server | Create directories
-  file: path="{{ sftp_home_partition }}/{{ item[0].name }}/{{ item[1].name | default(item[1]) }}"
-        owner={{ item[0].name }}
-        group={{ item[0].name }}
-        mode="{{ item[1].mode | default(0750) }}"
+  file: path="{{ sftp_home_partition }}/{{ item.0.name }}/{{ item.1.name }}"
+        owner={{ item.0.name }}
+        group={{ item.1.group | default(item.0.name) }}
+        mode="{{ item.1.mode | default(0750) }}"
         state=directory
-  with_nested:
+  with_subelements:
     - "{{ sftp_users }}"
-    - "{{ sftp_directories }}"
+    - directories
+
+# A working chrooted SFTP setup requires root:sftgroup ownership of a user's home directory.
+- name: SFTP-Server | Correct ownership and permission of home directories
+  file: path="{{ sftp_home_partition }}/{{ item.name }}"
+        owner=root
+        group={{ sftp_group_name }}
+        mode="0750"
+  with_items: "{{ sftp_users }}"
+
+- include: sftp-logging.yml
+  when: sftp_custom_log == true and ansible_os_family == "Debian"
+  tags: [sftp_custom_log]
