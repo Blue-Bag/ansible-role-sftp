@@ -1,5 +1,7 @@
 # SFTP-Server
 
+[![Build Status](https://travis-ci.org/Blue-Bag/ansible-role-sftp.svg?branch=main)](https://travis-ci.org/Blue-Bag/ansible-role-sftp)
+
 An Ansible role which configures an OpenSSH server for chrooted SFTP access.  The role is built in such a way that it will not unnecessarily alter a user's OpenSSH customisations.  Instead, it simply changes the crucial bits that it needs to, and adds the rest of its configuration in the form of a custom config block (OpenSSH's lack of some form of conf.d/ support forces this behaviour).
 
 This forked version has cherry picked additions/updates form other forks
