@@ -8,7 +8,7 @@
       - test1
       - test2
     sftp_users:
-      - name: peter
+      - name: TonyTester
         password: "$1$salty$li5TXAa2G6oxHTDkqx3Dz/"
         authorized: []
         shell: /sbin/nologin
@@ -18,10 +18,6 @@
             mode: 755,
             group: "{{ sftp_group_name }}"
           }
-      - name: sally
-        password: ""
-        authorized: []
-        directories: []
   pre_tasks:
     - name: Update apt cache.
       apt: update_cache=true cache_valid_time=1200
