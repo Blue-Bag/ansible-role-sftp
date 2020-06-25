@@ -13,7 +13,11 @@
         authorized: []
         shell: /sbin/nologin
         directories:
-          - {name: inbox, mode: 755}
+          - {
+            name: inbox,
+            mode: 755,
+            group: "{{ sftp_group_name }}"
+          }
       - name: sally
         password: ""
         authorized: []
