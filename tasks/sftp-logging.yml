@@ -17,10 +17,10 @@
   template:
     src: rsyslog-sftp.conf.j2
     dest: "{{ sftp_rsyslog_conf }}"
-    backup: no
+    backup: true
   become: true
   notify:
-   - Restart rsyslogd
+    - Restart rsyslogd
   when: sftp_custom_log
 
 - name: Create logrotate entry for sftp.log

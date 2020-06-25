@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# {{ ansible_managed | comment }}
 # create additional sockets for the sftp chrooted users
 #module(load="imuxsock")
 {% for user in sftp_users %}

@@ -1,6 +1,6 @@
 ---
 - name: SFTP-Server | Restart sshd
-  service: name={{ ssh_service | default('ssh')}} state=restarted
+  service: name={{ ssh_service | default('ssh') }} state=restarted
 
 - name: Restart rsyslogd
   service:

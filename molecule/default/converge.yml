@@ -1,0 +1,34 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    sftp_directories:
+      - test1
+      - test2
+    sftp_users:
+      - name: TonyTester
+        password: "$1$salty$li5TXAa2G6oxHTDkqx3Dz/"
+        authorized: []
+        shell: /sbin/nologin
+        directories:
+          - {
+            name: inbox,
+            mode: 755,
+            group: "{{ sftp_group_name }}"
+          }
+    sftp_user_files_delete: []
+
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=1200
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+    - name: Install openssl
+      apt:
+        name: ['openssh-server', 'openssh-client']
+        update_cache: true
+        cache_valid_time: 86400
+  roles:
+    - role: ansible-role-sftp

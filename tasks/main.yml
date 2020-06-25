@@ -17,8 +17,8 @@
 - name: Add Group to AllowGroups
   lineinfile:
     dest: /etc/ssh/sshd_config
-    backup: True
-    backrefs: True
+    backup: true
+    backrefs: true
     state: present
     regexp: '^(AllowGroups(?!.*\b{{ sftp_group_name }}\b).*)$'
     line: '\1 {{ sftp_group_name }}'
@@ -33,7 +33,9 @@
 
 # # Some sed magic to grab the entire sshd_config, excluding our custom config block.
 # - name: SFTP-Server | Get sshd_config content
-#   shell: sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} block/! { p }' /etc/ssh/sshd_config
+#   shell: |
+#      sed -n '/# Begin SFTP-Server {{ sftp_group_name }} block/,/# End SFTP-Server {{ sftp_group_name }} /
+#      block/! { p }' /etc/ssh/sshd_config
 #   register: sftp_sshd_config_content
 #   changed_when: True == False
 
@@ -53,6 +55,7 @@
       Match Group {{ sftp_group_name }}
          ChrootDirectory %h
          AllowTCPForwarding no
+         PermitTunnel no
          X11Forwarding no
          {{'ForceCommand ' ~ sftp_force_command  if sftp_force_command else ''}}
          AuthorizedKeysFile /etc/ssh/authorized_keys/%u
@@ -64,7 +67,7 @@
   user: name={{ item.name }}
         group={{ sftp_group_name }}
         home="{{ sftp_home_partition }}/{{ item.name }}"
-        shell="{{item.shell | default(sftp_default_shell)}}"
+        shell="{{ item.shell | default(sftp_default_shell) }}"
         state=present
         createhome=no
   with_items: "{{ sftp_users }}"
@@ -73,7 +76,7 @@
 - name: SFTP-Server | remove user bash files
   file:
     state: absent
-    path: "{{ sftp_home_partition }}/{{ item.0.name}}/{{ item.1}}"
+    path: "{{ sftp_home_partition }}/{{ item.0.name }}/{{ item.1 }}"
   with_nested:
     - "{{ sftp_users }}"
     - "{{ sftp_user_files_delete }}"
@@ -94,7 +97,9 @@
   user: name={{ item.name }}
         password={{ item.password }}
   with_items: "{{ sftp_users }}"
-  when: (item.password is defined) and (item.password != '')
+  when:
+    - item.password is defined
+    - item.password
   no_log: true
 
 # Create directories for SFTP users. Optional, but recommended.
@@ -117,5 +122,7 @@
   with_items: "{{ sftp_users }}"
 
 - include: sftp-logging.yml
-  when: sftp_custom_log == true and ansible_os_family == "Debian"
+  when:
+    - sftp_custom_log | bool
+    - ansible_os_family == "Debian"
   tags: [sftp_custom_log]

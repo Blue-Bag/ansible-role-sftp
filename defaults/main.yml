@@ -2,7 +2,7 @@
 sftp_home_partition: /home
 sftp_group_name: sftpusers
 
-sftp_allow_passwords: False
+sftp_allow_passwords: false
 
 
 sftp_log_target: 'AUTH'
@@ -16,7 +16,7 @@ sftp_force_command: "internal-sftp -f {{ sftp_log_target }} -l {{ sftp_log_level
 # you can override the OS default nologin shell here
 # sftp_default_shell: '/usr/sbin/nologin'
 
-sftp_custom_log: False
+sftp_custom_log: false
 
 sftp_log_file: '/var/log/sftp.log'
 sftp_logfile_rotate_number: 52
