@@ -16,7 +16,7 @@
           - {name: inbox, mode: 755}
       - name: sally
         password: ""
-        authorized: [sally.pub]
+        authorized: []
         directories: []
   pre_tasks:
     - name: Update apt cache.
