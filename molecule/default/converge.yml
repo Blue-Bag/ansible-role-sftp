@@ -18,6 +18,8 @@
             mode: 755,
             group: "{{ sftp_group_name }}"
           }
+    sftp_user_files_delete: []
+
   pre_tasks:
     - name: Update apt cache.
       apt: update_cache=true cache_valid_time=1200
