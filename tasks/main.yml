@@ -53,6 +53,7 @@
       Match Group {{ sftp_group_name }}
          ChrootDirectory %h
          AllowTCPForwarding no
+         PermitTunnel no
          X11Forwarding no
          {{'ForceCommand ' ~ sftp_force_command  if sftp_force_command else ''}}
          AuthorizedKeysFile /etc/ssh/authorized_keys/%u
