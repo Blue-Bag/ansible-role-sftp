@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  vars:
+    sftp_directories:
+      - test1
+      - test2
+    sftp_users:
+      - name: user1
+        password: ""
+        authorized: []
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=1200
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+  roles:
+    - role: ansible-role-sftp
