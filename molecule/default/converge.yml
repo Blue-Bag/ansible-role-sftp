@@ -8,9 +8,16 @@
       - test1
       - test2
     sftp_users:
-      - name: user1
-        password: ""
+      - name: peter
+        password: "$1$salty$li5TXAa2G6oxHTDkqx3Dz/"
         authorized: []
+        shell: /sbin/nologin
+        directories:
+          - {name: inbox, mode: 755}
+      - name: sally
+        password: ""
+        authorized: [sally.pub]
+        directories: []
   pre_tasks:
     - name: Update apt cache.
       apt: update_cache=true cache_valid_time=1200
