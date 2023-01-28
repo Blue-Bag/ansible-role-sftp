@@ -121,7 +121,7 @@
         mode="0750"
   with_items: "{{ sftp_users }}"
 
-- include: sftp-logging.yml
+- include_tasks: sftp-logging.yml
   when:
     - sftp_custom_log | bool
     - ansible_os_family == "Debian"
