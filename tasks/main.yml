@@ -1,7 +1,7 @@
 ---
 
 - name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+  include_vars: "{{ ansible_facts['os_family'] }}.yml"
 
 - name: SFTP-Server | Define default shell.
   set_fact:
@@ -121,8 +121,8 @@
         mode="0750"
   with_items: "{{ sftp_users }}"
 
-- include: sftp-logging.yml
+- include_tasks: sftp-logging.yml
   when:
     - sftp_custom_log | bool
-    - ansible_os_family == "Debian"
+    - ansible_facts['os_family'] == "Debian"
   tags: [sftp_custom_log]
